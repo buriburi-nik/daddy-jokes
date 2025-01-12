@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dad Jokes</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Luckiest Guy', cursive;
+            background: linear-gradient(135deg, #ffd700, #f06c64);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .container {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            border: 5px solid #000;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #ff4500;
+            margin-bottom: 15px;
+            font-family: 'Permanent Marker', cursive;
+            text-shadow: 3px 3px 0 #000;
+        }
+
+        #joke {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: #000;
+            border: 3px solid #000;
+            background: #ffe066;
+            padding: 20px;
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 5px 5px 0 #000;
+            animation: popIn 0.5s ease-out;
+        }
+
+        #joke::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 10%;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 15px 15px 15px;
+            border-color: transparent transparent #ffe066 transparent;
+            transform: rotate(-15deg);
+            z-index: -1;
+        }
+
+        #btn {
+            background: #EE5454;
+            color: #fff;
+            border: 3px solid #000;
+            border-radius: 20px;
+            padding: 15px 35px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 5px 5px 0 #000;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #btn:hover {
+            background: #d9534f;
+            transform: translateY(-3px);
+            box-shadow: 7px 7px 0 #000;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .controls button {
+            background: #ffe066;
+            border: 3px solid #000;
+            border-radius: 15px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 4px 4px 0 #000;
+            font-family: 'Luckiest Guy', cursive;
+        }
+
+        .controls button:hover {
+            transform: scale(1.05);
+            background: #ffcc00;
+        }
+
+        .dark-mode {
+            background: #364652;
+            color: #fff;
+        }
+
+        .dark-mode #joke {
+            background: #00286D;
+            color: #fff;
+            border-color: #fff;
+        }
+
+        .dark-mode h1 {
+            color:#D81532;
+        }
+
+        .dark-mode #btn {
+            background: #555;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>DAD JOKE GENERATOR</h1>
+        <p id="joke">Wanna listen to a joke?</p>
+        <button id="btn">Tell me a joke Daddy!</button>
+        <div class="controls">
+            <button id="dark-mode-toggle">Toggle Dark Mode</button>
+            <button id="share-btn">Share This Joke</button>
+        </div>
+    </div>
+    <script>
+        const btn = document.getElementById('btn');
+        const jokeDisplay = document.getElementById('joke');
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const shareBtn = document.getElementById('share-btn');
+        let isDarkMode = false;
+
+        async function getJoke() {
+            jokeDisplay.textContent = 'Loading joke...';
+            const apiUrl = 'https://api.api-ninjas.com/v1/dadjokes';
+            const header = { headers: { 'X-Api-Key': '3LTl8wEySXfK+mHPXEuZUQ==XAnXoUxjbWCf3tOI' } };
+
+            try {
+                const response = await fetch(apiUrl, header);
+                const result = await response.json();
+                jokeDisplay.innerText = `${result[0].joke} 😂`;
+            } catch {
+                jokeDisplay.innerText = 'Oops! Couldn’t fetch a joke!';
+            }
+        }
+
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode', isDarkMode);
+        }
+
+        function shareJoke() {
+            const text = `Check out this joke: "${jokeDisplay.textContent}"`;
+            if (navigator.share) {
+                navigator.share({ text });
+            } else {
+                alert('Sharing is not supported on this device!');
+            }
+        }
+
+        btn.addEventListener('click', getJoke);
+        darkModeToggle.addEventListener('click', toggleDarkMode);
+        shareBtn.addEventListener('click', shareJoke);
+    </script>
+</body>
+
+</html>
